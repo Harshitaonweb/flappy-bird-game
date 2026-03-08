@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react';
 import birdImage from '../assets/blueBird.webp';
 import gameOverSound from '../assets/game over sound.wav';
-import bgMusic from '../assets/bgmusic.mp3';
 
 const CANVAS_WIDTH = 400;
 const CANVAS_HEIGHT = 600;
@@ -16,7 +15,6 @@ function GameCanvas({ onGameOver }) {
   const canvasRef = useRef(null);
   const birdImgRef = useRef(null);
   const audioRef = useRef(null);
-  const bgMusicRef = useRef(null);
   const scoreRef = useRef(0);
   const gameRef = useRef({
     birdY: CANVAS_HEIGHT / 2,
@@ -41,15 +39,6 @@ function GameCanvas({ onGameOver }) {
     const audio = new Audio(gameOverSound);
     audioRef.current = audio;
 
-    // Load and play background music
-    const bgAudio = new Audio(bgMusic);
-    bgAudio.loop = true;
-    bgAudio.volume = 0.5;
-    bgMusicRef.current = bgAudio;
-    
-    // Start background music
-    bgAudio.play().catch(err => console.log('Background music play failed:', err));
-
     // Reset game state
     game.birdY = CANVAS_HEIGHT / 2;
     game.birdVelocity = 0;
@@ -59,11 +48,6 @@ function GameCanvas({ onGameOver }) {
     
     // Game over sound function
     const playGameOverSound = () => {
-      // Stop background music
-      if (bgMusicRef.current) {
-        bgMusicRef.current.pause();
-        bgMusicRef.current.currentTime = 0;
-      }
       // Play game over sound
       if (audioRef.current) {
         audioRef.current.currentTime = 0;
