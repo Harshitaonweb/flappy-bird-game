@@ -234,11 +234,6 @@ function GameCanvas({ onGameOver }) {
       if (game.animationId) {
         cancelAnimationFrame(game.animationId);
       }
-      // Stop background music when component unmounts
-      if (bgMusicRef.current) {
-        bgMusicRef.current.pause();
-        bgMusicRef.current.currentTime = 0;
-      }
     };
   }, [onGameOver]);
 
