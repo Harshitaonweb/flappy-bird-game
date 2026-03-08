@@ -12,6 +12,7 @@ function App() {
     return parseInt(localStorage.getItem('highScore') || '0');
   });
   const [isMusicOn, setIsMusicOn] = useState(true);
+  const [volume, setVolume] = useState(0.5);
   const bgMusicRef = useRef(null);
   const musicStartedRef = useRef(false);
 
@@ -19,7 +20,7 @@ function App() {
     // Load background music
     const bgAudio = new Audio(bgMusic);
     bgAudio.loop = true;
-    bgAudio.volume = 0.5;
+    bgAudio.volume = volume;
     bgMusicRef.current = bgAudio;
 
     // Auto-play music when app loads
@@ -35,7 +36,7 @@ function App() {
         bgMusicRef.current.currentTime = 0;
       }
     };
-  }, [isMusicOn]);
+  }, [isMusicOn, volume]);
 
   const startBackgroundMusic = () => {
     if (bgMusicRef.current && !musicStartedRef.current && isMusicOn) {
@@ -58,6 +59,14 @@ function App() {
       }
       return newState;
     });
+  };
+
+  const handleVolumeChange = (e) => {
+    const newVolume = parseFloat(e.target.value);
+    setVolume(newVolume);
+    if (bgMusicRef.current) {
+      bgMusicRef.current.volume = newVolume;
+    }
   };
 
   const handleStart = () => {
@@ -99,23 +108,15 @@ function App() {
 
   return (
     <div className="app">
-      <button className="music-toggle" onClick={toggleMusic} title={isMusicOn ? 'Mute Music' : 'Unmute Music'}>
-        {isMusicOn ? (
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
-          </svg>
-        ) : (
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-            <line x1="23" y1="9" x2="17" y2="15"></line>
-            <line x1="17" y1="9" x2="23" y2="15"></line>
-          </svg>
-        )}
-      </button>
-      
-      {gameState === 'START' && <StartScreen onStart={handleStart} />}
+      {gameState === 'START' && (
+        <StartScreen 
+          onStart={handleStart} 
+          isMusicOn={isMusicOn}
+          toggleMusic={toggleMusic}
+          volume={volume}
+          onVolumeChange={handleVolumeChange}
+        />
+      )}
       {gameState === 'PLAYING' && (
         <GameCanvas 
           onGameOver={handleGameOver}

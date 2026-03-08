@@ -21,10 +21,16 @@ body {
   position: relative;
 }
 
-.music-toggle {
-  position: fixed;
-  top: 20px;
-  right: 20px;
+.volume-control {
+  margin-top: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+}
+
+.volume-toggle {
   width: 50px;
   height: 50px;
   border-radius: 50%;
@@ -34,36 +40,83 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
   transition: all 0.3s ease;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(10px);
 }
 
-.music-toggle::before {
+.volume-toggle::before {
   content: '';
   position: absolute;
-  top: -15px;
-  left: -15px;
-  right: -15px;
-  bottom: -15px;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 50%;
   backdrop-filter: blur(8px);
   z-index: -1;
 }
 
-.music-toggle:hover {
+.volume-toggle:hover {
   transform: scale(1.1);
   background: rgba(50, 205, 50, 1);
 }
 
-.music-toggle:active {
+.volume-toggle:active {
   transform: scale(0.95);
 }
 
-.music-toggle svg {
+.volume-toggle svg {
   color: white;
+}
+
+.volume-slider-container {
+  opacity: 0;
+  transform: translateX(-20px);
+  transition: all 0.3s ease;
+  pointer-events: none;
+  position: absolute;
+  left: 60px;
+}
+
+.volume-control:hover .volume-slider-container {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: all;
+}
+
+.volume-slider {
+  width: 120px;
+  height: 8px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.3);
+  outline: none;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  -webkit-appearance: none;
+}
+
+.volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #32CD32;
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.volume-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #32CD32;
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .screen {
