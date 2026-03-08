@@ -1,0 +1,103 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: #282c34;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.app {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.screen {
+  text-align: center;
+  color: white;
+  padding: 40px;
+}
+
+.start-screen {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.game-over-screen {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.start-content, .game-over-content {
+  background: rgba(0, 0, 0, 0.6);
+  padding: 60px 40px;
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+}
+
+.screen h1 {
+  font-size: 48px;
+  margin-bottom: 30px;
+  color: #32CD32;
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
+}
+
+.instructions {
+  margin: 20px 0;
+  font-size: 18px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.scores {
+  margin: 30px 0;
+}
+
+.score, .high-score {
+  font-size: 24px;
+  margin: 10px 0;
+}
+
+.high-score {
+  color: #32CD32;
+}
+
+.btn {
+  background: #32CD32;
+  border: none;
+  padding: 15px 40px;
+  font-size: 20px;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.btn:hover {
+  transform: scale(1.05);
+}
+
+.btn:active {
+  transform: scale(0.95);
+}
+
+.game-canvas {
+  border: 3px solid #32CD32;
+  display: block;
+  cursor: pointer;
+}
