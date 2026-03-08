@@ -1,5 +1,7 @@
 import { useEffect, useRef } from 'react';
 import birdImage from '../assets/blueBird.webp';
+import gameOverSound from '../assets/game over sound.wav';
+import bgMusic from '../assets/bgmusic.mp3';
 
 const CANVAS_WIDTH = 400;
 const CANVAS_HEIGHT = 600;
@@ -13,6 +15,8 @@ const BIRD_SIZE = 30;
 function GameCanvas({ onGameOver }) {
   const canvasRef = useRef(null);
   const birdImgRef = useRef(null);
+  const audioRef = useRef(null);
+  const bgMusicRef = useRef(null);
   const scoreRef = useRef(0);
   const gameRef = useRef({
     birdY: CANVAS_HEIGHT / 2,
@@ -33,12 +37,39 @@ function GameCanvas({ onGameOver }) {
     img.src = birdImage;
     birdImgRef.current = img;
 
+    // Load game over sound
+    const audio = new Audio(gameOverSound);
+    audioRef.current = audio;
+
+    // Load and play background music
+    const bgAudio = new Audio(bgMusic);
+    bgAudio.loop = true;
+    bgAudio.volume = 0.5;
+    bgMusicRef.current = bgAudio;
+    
+    // Start background music
+    bgAudio.play().catch(err => console.log('Background music play failed:', err));
+
     // Reset game state
     game.birdY = CANVAS_HEIGHT / 2;
     game.birdVelocity = 0;
     game.pipes = [];
     game.lastPipeTime = Date.now();
     scoreRef.current = 0;
+    
+    // Game over sound function
+    const playGameOverSound = () => {
+      // Stop background music
+      if (bgMusicRef.current) {
+        bgMusicRef.current.pause();
+        bgMusicRef.current.currentTime = 0;
+      }
+      // Play game over sound
+      if (audioRef.current) {
+        audioRef.current.currentTime = 0;
+        audioRef.current.play().catch(err => console.log('Audio play failed:', err));
+      }
+    };
     
     // Initialize clouds
     game.clouds = [];
@@ -101,6 +132,7 @@ function GameCanvas({ onGameOver }) {
 
       // Check ground/ceiling collision
       if (game.birdY <= 0 || game.birdY + BIRD_SIZE >= CANVAS_HEIGHT) {
+        playGameOverSound();
         onGameOver(scoreRef.current);
         return;
       }
@@ -128,6 +160,7 @@ function GameCanvas({ onGameOver }) {
 
         // Check collision
         if (checkCollision(birdX, game.birdY, pipe)) {
+          playGameOverSound();
           onGameOver(scoreRef.current);
           return;
         }
@@ -216,6 +249,11 @@ function GameCanvas({ onGameOver }) {
       canvas.removeEventListener('touchstart', handleTouch);
       if (game.animationId) {
         cancelAnimationFrame(game.animationId);
+      }
+      // Stop background music when component unmounts
+      if (bgMusicRef.current) {
+        bgMusicRef.current.pause();
+        bgMusicRef.current.currentTime = 0;
       }
     };
   }, [onGameOver]);
