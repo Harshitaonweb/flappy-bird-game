@@ -53,6 +53,8 @@ function GameCanvas({ onGameOver }) {
         audioRef.current.currentTime = 0;
         audioRef.current.play().catch(err => console.log('Audio play failed:', err));
       }
+      // Pass the audio element to onGameOver so it can restart bg music when done
+      return audioRef.current;
     };
     
     // Initialize clouds
@@ -116,8 +118,8 @@ function GameCanvas({ onGameOver }) {
 
       // Check ground/ceiling collision
       if (game.birdY <= 0 || game.birdY + BIRD_SIZE >= CANVAS_HEIGHT) {
-        playGameOverSound();
-        onGameOver(scoreRef.current);
+        const audio = playGameOverSound();
+        onGameOver(scoreRef.current, audio);
         return;
       }
 
@@ -144,8 +146,8 @@ function GameCanvas({ onGameOver }) {
 
         // Check collision
         if (checkCollision(birdX, game.birdY, pipe)) {
-          playGameOverSound();
-          onGameOver(scoreRef.current);
+          const audio = playGameOverSound();
+          onGameOver(scoreRef.current, audio);
           return;
         }
 
