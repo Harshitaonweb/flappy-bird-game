@@ -36,7 +36,25 @@ function App() {
         bgMusicRef.current.currentTime = 0;
       }
     };
-  }, [isMusicOn, volume]);
+  }, []);
+
+  // Update volume when it changes
+  useEffect(() => {
+    if (bgMusicRef.current) {
+      bgMusicRef.current.volume = volume;
+    }
+  }, [volume]);
+
+  // Handle music on/off
+  useEffect(() => {
+    if (bgMusicRef.current) {
+      if (isMusicOn && musicStartedRef.current) {
+        bgMusicRef.current.play().catch(err => console.log('Background music play failed:', err));
+      } else if (!isMusicOn) {
+        bgMusicRef.current.pause();
+      }
+    }
+  }, [isMusicOn]);
 
   const startBackgroundMusic = () => {
     if (bgMusicRef.current && !musicStartedRef.current && isMusicOn) {
