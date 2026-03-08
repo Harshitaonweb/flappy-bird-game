@@ -13,6 +13,7 @@ function App() {
   });
   const [isMusicOn, setIsMusicOn] = useState(true);
   const [volume, setVolume] = useState(0.5);
+  const [showPlayPrompt, setShowPlayPrompt] = useState(false);
   const bgMusicRef = useRef(null);
   const musicStartedRef = useRef(false);
 
@@ -25,9 +26,31 @@ function App() {
 
     // Auto-play music when app loads
     if (isMusicOn) {
-      bgAudio.play().catch(err => console.log('Background music play failed:', err));
-      musicStartedRef.current = true;
+      bgAudio.play()
+        .then(() => {
+          musicStartedRef.current = true;
+          setShowPlayPrompt(false);
+        })
+        .catch(err => {
+          console.log('Autoplay blocked, waiting for user interaction:', err);
+          setShowPlayPrompt(true);
+        });
     }
+
+    // Try to play on any user interaction
+    const handleInteraction = () => {
+      if (bgMusicRef.current && isMusicOn && !musicStartedRef.current) {
+        bgMusicRef.current.play()
+          .then(() => {
+            musicStartedRef.current = true;
+            setShowPlayPrompt(false);
+          })
+          .catch(err => console.log('Play failed:', err));
+      }
+    };
+
+    document.addEventListener('click', handleInteraction);
+    document.addEventListener('keydown', handleInteraction);
 
     return () => {
       // Stop background music when app unmounts
@@ -35,6 +58,8 @@ function App() {
         bgMusicRef.current.pause();
         bgMusicRef.current.currentTime = 0;
       }
+      document.removeEventListener('click', handleInteraction);
+      document.removeEventListener('keydown', handleInteraction);
     };
   }, []);
 
@@ -126,6 +151,11 @@ function App() {
 
   return (
     <div className="app">
+      {showPlayPrompt && (
+        <div className="play-prompt">
+          Click anywhere to enable music
+        </div>
+      )}
       {gameState === 'START' && (
         <StartScreen 
           onStart={handleStart} 
