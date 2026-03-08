@@ -22,6 +22,12 @@ function App() {
     bgAudio.volume = 0.5;
     bgMusicRef.current = bgAudio;
 
+    // Auto-play music when app loads
+    if (isMusicOn) {
+      bgAudio.play().catch(err => console.log('Background music play failed:', err));
+      musicStartedRef.current = true;
+    }
+
     return () => {
       // Stop background music when app unmounts
       if (bgMusicRef.current) {
@@ -29,7 +35,7 @@ function App() {
         bgMusicRef.current.currentTime = 0;
       }
     };
-  }, []);
+  }, [isMusicOn]);
 
   const startBackgroundMusic = () => {
     if (bgMusicRef.current && !musicStartedRef.current && isMusicOn) {
@@ -55,13 +61,7 @@ function App() {
   };
 
   const handleStart = () => {
-    startBackgroundMusic();
     setGameState('PLAYING');
-  };
-
-  const handleStartScreenClick = () => {
-    // Start music on any interaction with start screen
-    startBackgroundMusic();
   };
 
   const handleGameOver = useCallback((score, gameOverAudio) => {
@@ -115,7 +115,7 @@ function App() {
         )}
       </button>
       
-      {gameState === 'START' && <StartScreen onStart={handleStart} onInteraction={handleStartScreenClick} />}
+      {gameState === 'START' && <StartScreen onStart={handleStart} />}
       {gameState === 'PLAYING' && (
         <GameCanvas 
           onGameOver={handleGameOver}
