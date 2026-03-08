@@ -11,7 +11,7 @@ const PIPE_GAP = 150;
 const PIPE_WIDTH = 60;
 const BIRD_SIZE = 30;
 
-function GameCanvas({ onGameOver }) {
+function GameCanvas({ onGameOver, isMusicOn }) {
   const canvasRef = useRef(null);
   const birdImgRef = useRef(null);
   const audioRef = useRef(null);
@@ -48,8 +48,8 @@ function GameCanvas({ onGameOver }) {
     
     // Game over sound function
     const playGameOverSound = () => {
-      // Play game over sound
-      if (audioRef.current) {
+      // Play game over sound only if music is on
+      if (audioRef.current && isMusicOn) {
         audioRef.current.currentTime = 0;
         audioRef.current.play().catch(err => console.log('Audio play failed:', err));
       }
@@ -237,7 +237,7 @@ function GameCanvas({ onGameOver }) {
         cancelAnimationFrame(game.animationId);
       }
     };
-  }, [onGameOver]);
+  }, [onGameOver, isMusicOn]);
 
   return (
     <canvas

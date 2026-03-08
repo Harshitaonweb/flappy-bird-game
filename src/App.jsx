@@ -11,6 +11,7 @@ function App() {
   const [highScore, setHighScore] = useState(() => {
     return parseInt(localStorage.getItem('highScore') || '0');
   });
+  const [isMusicOn, setIsMusicOn] = useState(true);
   const bgMusicRef = useRef(null);
   const musicStartedRef = useRef(false);
 
@@ -31,11 +32,26 @@ function App() {
   }, []);
 
   const startBackgroundMusic = () => {
-    if (bgMusicRef.current && !musicStartedRef.current) {
+    if (bgMusicRef.current && !musicStartedRef.current && isMusicOn) {
       bgMusicRef.current.currentTime = 0;
       bgMusicRef.current.play().catch(err => console.log('Background music play failed:', err));
       musicStartedRef.current = true;
     }
+  };
+
+  const toggleMusic = () => {
+    setIsMusicOn(prev => {
+      const newState = !prev;
+      if (bgMusicRef.current) {
+        if (newState) {
+          bgMusicRef.current.play().catch(err => console.log('Background music play failed:', err));
+          musicStartedRef.current = true;
+        } else {
+          bgMusicRef.current.pause();
+        }
+      }
+      return newState;
+    });
   };
 
   const handleStart = () => {
@@ -50,14 +66,14 @@ function App() {
 
   const handleGameOver = useCallback((score, gameOverAudio) => {
     // Stop background music when game is over
-    if (bgMusicRef.current) {
+    if (bgMusicRef.current && isMusicOn) {
       bgMusicRef.current.pause();
     }
     
     // When game over sound finishes, restart background music
-    if (gameOverAudio) {
+    if (gameOverAudio && isMusicOn) {
       gameOverAudio.onended = () => {
-        if (bgMusicRef.current) {
+        if (bgMusicRef.current && isMusicOn) {
           bgMusicRef.current.currentTime = 0;
           bgMusicRef.current.play().catch(err => console.log('Background music play failed:', err));
         }
@@ -70,11 +86,11 @@ function App() {
       setHighScore(score);
       localStorage.setItem('highScore', score.toString());
     }
-  }, [highScore]);
+  }, [highScore, isMusicOn]);
 
   const handleRestart = () => {
     // Make sure background music is playing when restarting
-    if (bgMusicRef.current) {
+    if (bgMusicRef.current && isMusicOn) {
       bgMusicRef.current.currentTime = 0;
       bgMusicRef.current.play().catch(err => console.log('Background music play failed:', err));
     }
@@ -83,10 +99,27 @@ function App() {
 
   return (
     <div className="app">
+      <button className="music-toggle" onClick={toggleMusic} title={isMusicOn ? 'Mute Music' : 'Unmute Music'}>
+        {isMusicOn ? (
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+          </svg>
+        ) : (
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <line x1="23" y1="9" x2="17" y2="15"></line>
+            <line x1="17" y1="9" x2="23" y2="15"></line>
+          </svg>
+        )}
+      </button>
+      
       {gameState === 'START' && <StartScreen onStart={handleStart} onInteraction={handleStartScreenClick} />}
       {gameState === 'PLAYING' && (
         <GameCanvas 
           onGameOver={handleGameOver}
+          isMusicOn={isMusicOn}
         />
       )}
       {gameState === 'GAME_OVER' && (
