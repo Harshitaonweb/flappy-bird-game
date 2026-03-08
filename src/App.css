@@ -24,9 +24,10 @@ body {
 .volume-control {
   margin-top: 30px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 15px;
   position: relative;
 }
 
@@ -43,6 +44,7 @@ body {
   transition: all 0.3s ease;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(10px);
+  position: relative;
 }
 
 .volume-toggle::before {
@@ -73,17 +75,24 @@ body {
 
 .volume-slider-container {
   opacity: 0;
-  transform: translateX(-20px);
+  max-height: 0;
+  transform: translateY(-10px);
   transition: all 0.3s ease;
-  pointer-events: none;
-  position: absolute;
-  left: 60px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px 20px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 25px;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 .volume-control:hover .volume-slider-container {
   opacity: 1;
-  transform: translateX(0);
-  pointer-events: all;
+  max-height: 100px;
+  transform: translateY(0);
 }
 
 .volume-slider {
@@ -93,7 +102,6 @@ body {
   background: rgba(255, 255, 255, 0.3);
   outline: none;
   cursor: pointer;
-  backdrop-filter: blur(10px);
   -webkit-appearance: none;
 }
 
