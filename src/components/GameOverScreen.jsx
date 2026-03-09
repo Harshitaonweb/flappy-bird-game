@@ -1,6 +1,6 @@
 import backgroundImage from '../assets/bg.webp';
 
-function GameOverScreen({ score, highScore, onRestart, isMusicOn, toggleMusic, volume, onVolumeChange }) {
+function GameOverScreen({ score, highScore, onRestart, isMusicOn, toggleMusic, volume, onVolumeChange, difficulty, setDifficulty }) {
   return (
     <div 
       className="screen game-over-screen"
@@ -16,6 +16,25 @@ function GameOverScreen({ score, highScore, onRestart, isMusicOn, toggleMusic, v
           <p className="score">Score: {score}</p>
           <p className="high-score">High Score: {highScore}</p>
         </div>
+        
+        <div className="difficulty-selector">
+          <div className="difficulty-label">Difficulty: {difficulty === 'easy' ? 'Easy' : 'Hard'}</div>
+          <div className="difficulty-options">
+            <button 
+              className={`difficulty-option ${difficulty === 'easy' ? 'active' : ''}`}
+              onClick={() => setDifficulty('easy')}
+            >
+              Easy
+            </button>
+            <button 
+              className={`difficulty-option ${difficulty === 'hard' ? 'active' : ''}`}
+              onClick={() => setDifficulty('hard')}
+            >
+              Hard
+            </button>
+          </div>
+        </div>
+        
         <button onClick={onRestart} className="btn">
           Restart
         </button>

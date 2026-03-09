@@ -15,6 +15,7 @@ function App() {
   const [volume, setVolume] = useState(0.5);
   const [showPlayPrompt, setShowPlayPrompt] = useState(false);
   const [countdown, setCountdown] = useState(3);
+  const [difficulty, setDifficulty] = useState('easy');
   const bgMusicRef = useRef(null);
   const musicStartedRef = useRef(false);
 
@@ -212,6 +213,8 @@ function App() {
           toggleMusic={toggleMusic}
           volume={volume}
           onVolumeChange={handleVolumeChange}
+          difficulty={difficulty}
+          setDifficulty={setDifficulty}
         />
       )}
       {gameState === 'COUNTDOWN' && (
@@ -225,6 +228,7 @@ function App() {
         <GameCanvas 
           onGameOver={handleGameOver}
           isMusicOn={isMusicOn}
+          difficulty={difficulty}
         />
       )}
       {gameState === 'GAME_OVER' && (
@@ -236,6 +240,8 @@ function App() {
           toggleMusic={toggleMusic}
           volume={volume}
           onVolumeChange={handleVolumeChange}
+          difficulty={difficulty}
+          setDifficulty={setDifficulty}
         />
       )}
     </div>

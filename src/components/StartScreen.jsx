@@ -1,6 +1,6 @@
 import backgroundImage from '../assets/bg.webp';
 
-function StartScreen({ onStart, isMusicOn, toggleMusic, volume, onVolumeChange }) {
+function StartScreen({ onStart, isMusicOn, toggleMusic, volume, onVolumeChange, difficulty, setDifficulty }) {
   return (
     <div 
       className="screen start-screen"
@@ -15,6 +15,25 @@ function StartScreen({ onStart, isMusicOn, toggleMusic, volume, onVolumeChange }
         <div className="instructions">
           <p>Press SPACE, CLICK, or TAP to flap</p>
         </div>
+        
+        <div className="difficulty-selector">
+          <div className="difficulty-label">Difficulty: {difficulty === 'easy' ? 'Easy' : 'Hard'}</div>
+          <div className="difficulty-options">
+            <button 
+              className={`difficulty-option ${difficulty === 'easy' ? 'active' : ''}`}
+              onClick={() => setDifficulty('easy')}
+            >
+              Easy
+            </button>
+            <button 
+              className={`difficulty-option ${difficulty === 'hard' ? 'active' : ''}`}
+              onClick={() => setDifficulty('hard')}
+            >
+              Hard
+            </button>
+          </div>
+        </div>
+        
         <button onClick={onStart} className="btn">
           Start Game
         </button>

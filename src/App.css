@@ -339,3 +339,69 @@ body {
   display: block;
   cursor: pointer;
 }
+
+
+.difficulty-selector {
+  margin: 20px 0;
+  position: relative;
+}
+
+.difficulty-label {
+  font-size: 18px;
+  color: white;
+  margin-bottom: 10px;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  cursor: pointer;
+  padding: 10px 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  backdrop-filter: blur(5px);
+  transition: all 0.3s ease;
+}
+
+.difficulty-label:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.difficulty-options {
+  display: flex;
+  gap: 10px;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  transform: translateY(-10px);
+  margin-top: 10px;
+}
+
+.difficulty-selector:hover .difficulty-options {
+  opacity: 1;
+  max-height: 100px;
+  transform: translateY(0);
+}
+
+.difficulty-option {
+  flex: 1;
+  padding: 10px 20px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-radius: 8px;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+}
+
+.difficulty-option:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+.difficulty-option.active {
+  background: rgba(50, 205, 50, 0.8);
+  border-color: #32CD32;
+  box-shadow: 0 0 15px rgba(50, 205, 50, 0.6);
+}

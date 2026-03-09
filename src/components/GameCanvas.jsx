@@ -4,14 +4,29 @@ import gameOverSound from '../assets/game over sound.wav';
 
 const CANVAS_WIDTH = 400;
 const CANVAS_HEIGHT = 600;
-const GRAVITY = 0.5;
-const FLAP_STRENGTH = 8;
-const PIPE_SPEED = 2;
-const PIPE_GAP = 150;
+
+// Difficulty settings
+const DIFFICULTY_SETTINGS = {
+  easy: {
+    GRAVITY: 0.4,
+    FLAP_STRENGTH: 7,
+    PIPE_SPEED: 1.5,
+    PIPE_GAP: 180,
+    PIPE_INTERVAL: 2000,
+  },
+  hard: {
+    GRAVITY: 0.5,
+    FLAP_STRENGTH: 8,
+    PIPE_SPEED: 2,
+    PIPE_GAP: 150,
+    PIPE_INTERVAL: 1500,
+  }
+};
+
 const PIPE_WIDTH = 60;
 const BIRD_SIZE = 30;
 
-function GameCanvas({ onGameOver, isMusicOn }) {
+function GameCanvas({ onGameOver, isMusicOn, difficulty }) {
   const canvasRef = useRef(null);
   const birdImgRef = useRef(null);
   const audioRef = useRef(null);
@@ -29,6 +44,9 @@ function GameCanvas({ onGameOver, isMusicOn }) {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     const game = gameRef.current;
+    
+    // Get difficulty settings
+    const settings = DIFFICULTY_SETTINGS[difficulty];
 
     // Load bird image
     const img = new Image();
@@ -70,7 +88,7 @@ function GameCanvas({ onGameOver, isMusicOn }) {
     }
 
     const flap = () => {
-      game.birdVelocity = -FLAP_STRENGTH;
+      game.birdVelocity = -settings.FLAP_STRENGTH;
     };
 
     const handleKeyDown = (e) => {
@@ -90,7 +108,7 @@ function GameCanvas({ onGameOver, isMusicOn }) {
     canvas.addEventListener('click', handleClick);
     canvas.addEventListener('touchstart', handleTouch);
 
-    const checkCollision = (birdX, birdY, pipe) => {
+    const checkCollision = (birdX, birdY, pipe, pipeGap) => {
       // Add small margin to make collision more forgiving
       const margin = 5;
       const birdLeft = birdX + margin;
@@ -104,7 +122,7 @@ function GameCanvas({ onGameOver, isMusicOn }) {
       // Check if bird is in pipe's horizontal range
       if (birdRight > pipeLeft && birdLeft < pipeRight) {
         // Check collision with top pipe or bottom pipe
-        if (birdTop < pipe.topHeight || birdBottom > pipe.topHeight + PIPE_GAP) {
+        if (birdTop < pipe.topHeight || birdBottom > pipe.topHeight + pipeGap) {
           return true;
         }
       }
@@ -113,7 +131,7 @@ function GameCanvas({ onGameOver, isMusicOn }) {
 
     const gameLoop = () => {
       // Update bird physics
-      game.birdVelocity += GRAVITY;
+      game.birdVelocity += settings.GRAVITY;
       game.birdY += game.birdVelocity;
 
       // Check ground/ceiling collision
@@ -125,9 +143,9 @@ function GameCanvas({ onGameOver, isMusicOn }) {
 
       // Generate pipes
       const now = Date.now();
-      if (now - game.lastPipeTime > 1500) {
+      if (now - game.lastPipeTime > settings.PIPE_INTERVAL) {
         const minHeight = 50;
-        const maxHeight = CANVAS_HEIGHT - PIPE_GAP - 50;
+        const maxHeight = CANVAS_HEIGHT - settings.PIPE_GAP - 50;
         const topHeight = Math.random() * (maxHeight - minHeight) + minHeight;
         
         game.pipes.push({
@@ -142,10 +160,10 @@ function GameCanvas({ onGameOver, isMusicOn }) {
       const birdX = 50;
       for (let i = game.pipes.length - 1; i >= 0; i--) {
         const pipe = game.pipes[i];
-        pipe.x -= PIPE_SPEED;
+        pipe.x -= settings.PIPE_SPEED;
 
         // Check collision
-        if (checkCollision(birdX, game.birdY, pipe)) {
+        if (checkCollision(birdX, game.birdY, pipe, settings.PIPE_GAP)) {
           const audio = playGameOverSound();
           onGameOver(scoreRef.current, audio);
           return;
@@ -204,10 +222,10 @@ function GameCanvas({ onGameOver, isMusicOn }) {
         
         // Bottom pipe
         ctx.fillStyle = '#2D5016';
-        ctx.fillRect(pipe.x, pipe.topHeight + PIPE_GAP, PIPE_WIDTH, CANVAS_HEIGHT);
+        ctx.fillRect(pipe.x, pipe.topHeight + settings.PIPE_GAP, PIPE_WIDTH, CANVAS_HEIGHT);
         // Pipe cap
         ctx.fillStyle = '#3A6B1F';
-        ctx.fillRect(pipe.x - 5, pipe.topHeight + PIPE_GAP, PIPE_WIDTH + 10, 30);
+        ctx.fillRect(pipe.x - 5, pipe.topHeight + settings.PIPE_GAP, PIPE_WIDTH + 10, 30);
       });
 
       // Draw bird
@@ -237,7 +255,7 @@ function GameCanvas({ onGameOver, isMusicOn }) {
         cancelAnimationFrame(game.animationId);
       }
     };
-  }, [onGameOver, isMusicOn]);
+  }, [onGameOver, isMusicOn, difficulty]);
 
   return (
     <canvas
