@@ -14,6 +14,7 @@ function App() {
   const [isMusicOn, setIsMusicOn] = useState(true);
   const [volume, setVolume] = useState(0.5);
   const [showPlayPrompt, setShowPlayPrompt] = useState(false);
+  const [countdown, setCountdown] = useState(3);
   const bgMusicRef = useRef(null);
   const musicStartedRef = useRef(false);
 
@@ -113,8 +114,23 @@ function App() {
   };
 
   const handleStart = () => {
-    setGameState('PLAYING');
+    setGameState('COUNTDOWN');
+    setCountdown(3);
   };
+
+  // Countdown effect
+  useEffect(() => {
+    if (gameState === 'COUNTDOWN') {
+      if (countdown > 0) {
+        const timer = setTimeout(() => {
+          setCountdown(countdown - 1);
+        }, 1000);
+        return () => clearTimeout(timer);
+      } else {
+        setGameState('PLAYING');
+      }
+    }
+  }, [gameState, countdown]);
 
   const handleGameOver = useCallback((score, gameOverAudio) => {
     // Stop background music when game is over
@@ -146,7 +162,8 @@ function App() {
       bgMusicRef.current.currentTime = 0;
       bgMusicRef.current.play().catch(err => console.log('Background music play failed:', err));
     }
-    setGameState('PLAYING');
+    setGameState('COUNTDOWN');
+    setCountdown(3);
   };
 
   return (
@@ -196,6 +213,13 @@ function App() {
           volume={volume}
           onVolumeChange={handleVolumeChange}
         />
+      )}
+      {gameState === 'COUNTDOWN' && (
+        <div className="countdown-screen">
+          <div className="countdown-number">
+            {countdown > 0 ? countdown : 'GO!'}
+          </div>
+        </div>
       )}
       {gameState === 'PLAYING' && (
         <GameCanvas 
